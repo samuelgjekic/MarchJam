@@ -1,4 +1,4 @@
-# 🎮 YourGameProject
+# 🎮 March Game Jam
 
 ## 🚀 About
 March Charity Jam Game with theme "Keep Moving Forward". Developed by [Jammers on the Run Discord group].
