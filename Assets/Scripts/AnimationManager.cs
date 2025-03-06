@@ -9,6 +9,8 @@ public class AnimationManager : MonoBehaviour
     private Animator animator;
     private string currentAnimation = "";
 
+    [Range(0f, 5f)] public float animationSpeed = 1f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -37,6 +39,28 @@ public class AnimationManager : MonoBehaviour
         // Overides current animation
         animator.Play(animationName);
         currentAnimation = animationName;
+    }
+
+    public void PauseCurrentAnimation()
+    {
+        if (animator == null) return;
+
+        // Pause Current
+        animator.speed = 0;
+    }
+
+    public void ResumeCurrentAnimation() 
+    {
+
+        if (animator == null) return;
+
+        // resume
+        animator.speed = animationSpeed;
+    }
+
+    public void SetAnimationTrigger(string triggerName)
+    {
+        animator.SetTrigger(triggerName);
     }
 
 }

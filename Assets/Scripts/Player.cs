@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
     private BoxCollider2D _collider; // Default collider for player
     private Vector2 _originalColliderSize; // Original collider settings, for resetting after slide
     private Vector2 _originalColliderOffset; 
+    public int Total_Coins = 0;
 
 
     [Header("Movement Settings")]
@@ -90,11 +91,14 @@ public class Player : MonoBehaviour
     [Header("Events")]
     // Events available in the Inspector, for ease of use.
     // Can for example simply add the player object to the event IsMoving and Set Animation using AnimationManager directly in inspector.
+
+    public UnityEvent OnCollideWithEnemy;
     public UnityEvent IsGrounded;
     public UnityEvent IsMoving;
     public UnityEvent OnJump;
     public UnityEvent IsFalling;
     public UnityEvent OnSlide;
+    public UnityEvent OnStopSlide;
 
     public UnityEvent OnStartUp;
 
@@ -115,7 +119,10 @@ public class Player : MonoBehaviour
 
         // Setup Rigid Body, Animation Manager
         if(_rb == null) { _rb = GetComponent<Rigidbody2D>(); }
-        if(_animationManager == null) { _animationManager = GetComponent<AnimationManager>();}
+        if(_animationManager == null) 
+        {
+             _animationManager = GetComponent<AnimationManager>();
+             }
         OnStartUp?.Invoke(); // Invoke Event On Start in inspector
 
         // Cache collider for slide and unslide
@@ -136,6 +143,9 @@ public class Player : MonoBehaviour
         HandleStamina(); // Handles all the stamina for the player
         HandleSlide(); // Handles the sliding mechanics
 
+
+        // Trail instance update position
+        if (trailInstance != null){ trailInstance.transform.position = groundTrailAnchorPoint.transform.position; }
         // Jump Function
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Jump")){
             Jump(jumpForce);
@@ -210,6 +220,8 @@ public class Player : MonoBehaviour
             if(_hasLaunched == false && _isGrounded == true) 
             { 
                 SetLaunched(true); // First hit on the ground we set have launched to true
+                _animationManager.SetAnimationTrigger("DropOnGround");
+                Debug.Log("Player Landed first time");
             }  
 
                 // Set State
@@ -218,7 +230,7 @@ public class Player : MonoBehaviour
         } else {
 
             // Check if falling and invoke event
-            if(_hasLaunched == true && _rb.velocity.y < -0.1f){
+            if(_hasLaunched == true && _rb.linearVelocity.y < -0.1f){
                 IsFalling?.Invoke();
             }
 
@@ -239,14 +251,14 @@ public class Player : MonoBehaviour
         if(allowJumpInAir == false) {
         if(_isGrounded){
             // If grounded, jump
-            _rb.velocity = new Vector2(_rb.velocity.x, 0);
+            _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, 0);
             _rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse); // Jump 
             SetGrounded(false);
             SetAired(true);
             OnJump?.Invoke(); // Invokes On Jump in inspector
         } 
         } else {
-            _rb.velocity = new Vector2(_rb.velocity.x, 0);
+            _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, 0);
             _rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             SetGrounded(false);
             SetAired(true);
@@ -260,7 +272,7 @@ public class Player : MonoBehaviour
     public void MoveForward()
     {
         if(_isGrounded){
-        _rb.velocity = new Vector2(moveSpeed, _rb.velocity.y);
+        _rb.linearVelocity = new Vector2(moveSpeed, _rb.linearVelocity.y);
         IsMoving?.Invoke(); // Event: Is Moving
         }
     }
@@ -330,6 +342,7 @@ public class Player : MonoBehaviour
     {
         if(_isSliding)
         {
+            OnStopSlide?.Invoke();
             SetSliding(false);
             moveSpeed /= slideSpeedMultiplier;
             _collider.size = _originalColliderSize;
@@ -372,6 +385,13 @@ public class Player : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position, transform.position + Vector3.down * 0.1f);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Enemy")){
+            OnCollideWithEnemy?.Invoke();
+        }
     }
 
 

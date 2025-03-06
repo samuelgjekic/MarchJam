@@ -32,7 +32,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -5.996234, y: 0.14696896, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3758118530304039226}
@@ -79,12 +79,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 6dd84df05d6da164183bff686d97c5fd, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 065f1a4ccc5f4044abf91d465002cc32, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 10.24, y: 10.24}
+  m_Size: {x: 2.56, y: 2.56}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -116,7 +116,7 @@ Rigidbody2D:
   m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &3178242096366190417
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -149,18 +149,18 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.26398563, y: -0.13199282}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.52577984, y: 0.5128899}
-    oldSize: {x: 10.24, y: 10.24}
-    newSize: {x: 10.24, y: 10.24}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 2.56, y: 2.56}
+    newSize: {x: 2.56, y: 2.56}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 10.8, y: 10.24}
+  m_Size: {x: 1.1, y: 1.1}
   m_EdgeRadius: 0
 --- !u!95 &1809341012761702404
 Animator:
@@ -172,7 +172,7 @@ Animator:
   m_GameObject: {fileID: 4750564800193241605}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 1ff14c5e1b76c0b4f94e9b447bdafe10, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -206,8 +206,8 @@ MonoBehaviour:
   playerGravity: 0.1
   slideSpeedMultiplier: 1.5
   slideDuration: 1
-  slideColliderSize: {x: 9.31, y: 5.03}
-  slideColliderOffset: {x: 0.2639856, y: -0.1319928}
+  slideColliderSize: {x: 1.1, y: 0.8}
+  slideColliderOffset: {x: 0, y: 0}
   showTrailInAir: 1
   groundTrailPrefab: {fileID: 8313296991272523112, guid: eb3fafd335d4ef04eaa5827fafa8911d, type: 3}
   groundTrailAnchorPoint: {fileID: 3758118530304039226}
@@ -224,13 +224,64 @@ MonoBehaviour:
       m_Calls: []
   OnJump:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3999756363169670293}
+        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+        m_MethodName: SetGravity
+        m_Mode: 4
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0.4
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   IsFalling:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3999756363169670293}
+        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+        m_MethodName: SetGravity
+        m_Mode: 4
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 1
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnSlide:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 130893305374908959}
+        m_TargetAssemblyTypeName: AnimationManager, Assembly-CSharp
+        m_MethodName: SetAnimationTrigger
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: OnSlide
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnStopSlide:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 130893305374908959}
+        m_TargetAssemblyTypeName: AnimationManager, Assembly-CSharp
+        m_MethodName: SetAnimationTrigger
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: StopSlide
+          m_BoolArgument: 0
+        m_CallState: 2
   OnStartUp:
     m_PersistentCalls:
       m_Calls: []
@@ -246,6 +297,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5989f7ea51d940d43a2dfa4ae627e408, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animationSpeed: 1
 --- !u!1 &8152240243988335044
 GameObject:
   m_ObjectHideFlags: 0
@@ -271,7 +323,7 @@ Transform:
   m_GameObject: {fileID: 8152240243988335044}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.2, y: -5.2, z: 0}
+  m_LocalPosition: {x: -0.85, y: -0.48, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
