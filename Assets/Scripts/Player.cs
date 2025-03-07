@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     private bool _isAired = false; // Is the player in air
     private bool _isGrounded = false; // Is the player on the ground
     private bool _hasLaunched = false; // have player launched from slingshot
+    private bool _isHitting = false; // is player hitting
     private Rigidbody2D _rb; 
     private GameObject trailInstance; // The Trail instance, if enabled
     private AnimationManager _animationManager; // Used for playing animations with animator
@@ -31,6 +32,9 @@ public class Player : MonoBehaviour
 
     [Tooltip("Max speed of player, when stamina is max")]
     public float maxSpeed = 10f;
+    public float rayLengthForGroundCheck = 0.6f;
+    public float rayLengthForEnemyCheck = 2f;
+
 
 
     [Header("Stamina Settings")] 
@@ -87,19 +91,21 @@ public class Player : MonoBehaviour
     [Space()]
     [Tooltip("The ground layer to check if grounded")]
     public LayerMask groundLayer; // Layer of which the player moves on top of
+    public LayerMask enemyLayer;
+    private Enemy closestEnemy = null;
 
     [Header("Events")]
     // Events available in the Inspector, for ease of use.
     // Can for example simply add the player object to the event IsMoving and Set Animation using AnimationManager directly in inspector.
 
-    public UnityEvent OnCollideWithEnemy;
+    public UnityEvent OnEnemyInSight;
+    public UnityEvent OnHitEnemy;
     public UnityEvent IsGrounded;
     public UnityEvent IsMoving;
     public UnityEvent OnJump;
     public UnityEvent IsFalling;
     public UnityEvent OnSlide;
     public UnityEvent OnStopSlide;
-
     public UnityEvent OnStartUp;
 
     // Start is called before the first frame update
@@ -142,6 +148,7 @@ public class Player : MonoBehaviour
         MoveForward(); // Handles movement when grounded
         HandleStamina(); // Handles all the stamina for the player
         HandleSlide(); // Handles the sliding mechanics
+        CheckForEnemy();
 
 
         // Trail instance update position
@@ -198,6 +205,47 @@ public class Player : MonoBehaviour
 
     }
 
+    public void CheckForEnemy()
+    {
+    // Cast overlap circle
+    Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, rayLengthForEnemyCheck, enemyLayer);
+
+    float closestDistance = Mathf.Infinity; 
+
+    // Loop through all detected enemies 
+    foreach (var enemy in enemies)
+    {
+        if (enemy.CompareTag("Enemy"))
+        {
+            float distance = Vector2.Distance(transform.position, enemy.transform.position);
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestEnemy = enemy.GetComponent<Enemy>(); // Set the closest enemy
+            }
+        }
+    }
+
+    // If a closest enemy is found, trigger the event
+    if (closestEnemy != null && closestEnemy.GetHitStatus() != true && _isHitting != true)
+    {
+        Debug.Log("Closest enemy detected: " + closestEnemy.name);
+        OnEnemyInSight?.Invoke(); // Trigger the event if needed
+        _isHitting = true;
+    }
+    
+    }
+
+    public void HitEnemy()
+    {
+        if (closestEnemy == null) return;
+        if (closestEnemy.GetHitStatus() == true ) return; // If already hit , return
+        closestEnemy._animationManager.SetAnimationTrigger("Die");
+        closestEnemy.SetHitStatus(true);
+        OnHitEnemy?.Invoke();
+    }
+
+
     /// <summary>
     /// Checks if player is grounded using raycast, 
     // aswell as if the player is falling, invokes the events for 
@@ -205,12 +253,12 @@ public class Player : MonoBehaviour
     /// </summary>
     private void CheckIfGrounded()
     {
-        float rayLength = 0.6f;
+        //float rayLength = 0.6f;
         // Cast ray from player
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, rayLength, groundLayer);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, rayLengthForGroundCheck, groundLayer);
 
         if(hit.collider != null){
-            IsGrounded?.Invoke(); // Invoke for Unity Event isGrounded
+            if (_isHitting == false) IsGrounded?.Invoke(); // Invoke for Unity Event isGrounded
             if(_isGrounded == false && groundHitEffectPrefab != null) { 
                 // Spawn ground hit effect
                 Instantiate(groundHitEffectPrefab, groundHitEffectAnchorPoint.position , groundHitEffectAnchorPoint.rotation);
@@ -230,7 +278,7 @@ public class Player : MonoBehaviour
         } else {
 
             // Check if falling and invoke event
-            if(_hasLaunched == true && _rb.linearVelocity.y < -0.1f){
+            if(_hasLaunched == true && _rb.linearVelocity.y < 0.4f){
                 IsFalling?.Invoke();
             }
 
@@ -335,6 +383,13 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void SetIsHittingFalse()
+    {
+        _isHitting = false;
+        //Debug.Log("Set hitting was called");
+    }
+
+
     /// <summary>
     /// Stops the slide function and resets the collider values to default
     /// </summary>
@@ -390,7 +445,7 @@ public class Player : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Enemy")){
-            OnCollideWithEnemy?.Invoke();
+            //OnCollideWithEnemy?.Invoke();
         }
     }
 
