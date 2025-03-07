@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 33c63afbe9e9ca74f89efe0bfb107218
+guid: 0bd079c9123e69643ba9d28c7792317f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5170235581557775919
-    second: RunandPunch_06_0
+      213: -3878557786174838139
+    second: ground_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: RunandPunch_06_0
+      name: ground_0
       rect:
         serializedVersion: 2
-        x: 11
-        y: 49
-        width: 226
-        height: 191
+        x: 0
+        y: 0
+        width: 3000
+        height: 640
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1d1e924b122af38b0800000000000000
-      internalID: -5170235581557775919
+      spriteID: 58a29323e389c2ac0800000000000000
+      internalID: -3878557786174838139
       vertices: []
       indices: 
       edges: []
@@ -147,8 +147,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      RunandPunch_06_0: -5170235581557775919
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
